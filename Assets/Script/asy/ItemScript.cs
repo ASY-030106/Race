@@ -15,4 +15,6 @@ public class ItemScript : MonoBehaviour
     {
         transform.Rotate(Vector3.down * 17 * Time.deltaTime, Space.World);
     }
+
+    
 }

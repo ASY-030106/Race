@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -9,6 +10,8 @@ public class PlayerBall : MonoBehaviour
     public int cnt;
     bool isJump;
     public float time;
+    public List<int> itemsList = new List<int>();
+
 
     void Awake()
     {
@@ -49,7 +52,7 @@ public class PlayerBall : MonoBehaviour
             rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
         }
 
-            if(other.name == "Cube")
+        if(other.name == "Cube")
         {
             rigid.AddForce(Vector3.up * 2, ForceMode.Impulse);
             time += Time.deltaTime;
@@ -61,13 +64,13 @@ public class PlayerBall : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other) //다른 객체와 충돌했을 때 , ohter이 다른 객체를 의미?
-    {
-        if (other.tag == "Item")
-        {
-            PlayerBall player = GetComponent<PlayerBall>();
-            player.cnt++;
+     void OnTriggerEnter(Collider other) //다른 객체와 충돌했을 때 , ohter이 다른 객체를 의미?
+     {
+         if (other.tag == "Item")
+         {
             other.gameObject.SetActive(false);
-        }
-    }
+            itemsList.Add(cnt++);
+            Debug.Log(itemsList.Count);
+         }
+     }
 }
