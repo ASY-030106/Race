@@ -8,6 +8,7 @@ public class PlayerBall : MonoBehaviour
     Rigidbody rigid;
     public int cnt;
     bool isJump;
+    public float time;
 
     void Awake()
     {
@@ -43,10 +44,21 @@ public class PlayerBall : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-            if (other.name == "Point")
+        if (other.name == "Point")
+        {
+            rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+        }
+
+            if(other.name == "Cube")
+        {
+            rigid.AddForce(Vector3.up * 2, ForceMode.Impulse);
+            time += Time.deltaTime;
+            Debug.Log(time);
+            if(time > 5.0f)
             {
-                rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+                other.gameObject.SetActive(false);
             }
+        }
     }
 
     void OnTriggerEnter(Collider other) //다른 객체와 충돌했을 때 , ohter이 다른 객체를 의미?
