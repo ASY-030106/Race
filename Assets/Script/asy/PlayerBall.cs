@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class PlayerBall : MonoBehaviour
@@ -10,7 +11,8 @@ public class PlayerBall : MonoBehaviour
     public int cnt;
     bool isJump;
     public float time;
-    public List<int> itemsList = new List<int>();
+    //public List<int> itemsList = new List<int>();
+    public Text lifeUI, ScoreUI, FinishUI;
 
 
     void Awake()
@@ -22,9 +24,9 @@ public class PlayerBall : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Jump") && !isJump) //isJump가 true면
+        if (Input.GetButtonDown("Jump") && !isJump) //isJump가 false면
         {
-            isJump = true;
+            isJump = true; //isJump가 true가 되면서 점프를 다시 못하게함 ( 무한점프 방지 )
             rigid.AddForce(new Vector3(0,50,0),ForceMode.Impulse);
         }
     }
@@ -38,28 +40,39 @@ public class PlayerBall : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.name == "Floor")
+        if(collision.gameObject.tag == "Floor")
         {
             Debug.Log("Floor에 닿음");
-            isJump = false;
+            isJump = false; //바닥에 닿으면 다시 점프가 가능하게 하기 위해서 false로 바꾸면서 다시 점프 가능
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.name == "Point")
+        
+        Debug.Log(cnt);
+
+        if (cnt >= 9)
         {
-            rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+            if (other.name == "Point")
+            {
+                rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+            }
         }
 
-        if(other.name == "Cube")
+        if (cnt >= 30)
         {
-            rigid.AddForce(Vector3.up * 2, ForceMode.Impulse);
-            time += Time.deltaTime;
-            Debug.Log(time);
-            if(time > 5.0f)
+            if (other.name == "Point2")
             {
-                other.gameObject.SetActive(false);
+                rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+            }
+        }
+
+        if (cnt >= 48)
+        {
+            if (other.name == "Finish")
+            {
+                FinishUI.text = "Finish!!";
             }
         }
     }
@@ -69,8 +82,9 @@ public class PlayerBall : MonoBehaviour
          if (other.tag == "Item")
          {
             other.gameObject.SetActive(false);
-            itemsList.Add(cnt++);
-            Debug.Log(itemsList.Count);
+            cnt++;
+            ScoreUI.text = "점수 : " + cnt;
+            Debug.Log(cnt);
          }
      }
 }

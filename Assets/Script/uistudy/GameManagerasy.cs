@@ -41,7 +41,7 @@ public class GameManagerasy: MonoBehaviour
             Stop = true;
             Debug.Log("게임 종료");
         }
-        
+
     }
 
     public void Money() //버튼이 눌러졌을 때
