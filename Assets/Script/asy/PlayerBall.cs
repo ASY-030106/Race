@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,8 +11,11 @@ public class PlayerBall : MonoBehaviour
     bool isJump;
     public float time;
     //public List<int> itemsList = new List<int>();
-    public Text lifeUI, ScoreUI, FinishUI;
-
+    public Text lifeUI;
+    public Text ScoreUI;
+    public Text FinishUI;
+    public Transform destination; //목적지
+    public Transform[] startPoints; 
 
     void Awake()
     {
@@ -26,9 +28,19 @@ public class PlayerBall : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump") && !isJump) //isJump가 false면
         {
-            isJump = true; //isJump가 true가 되면서 점프를 다시 못하게함 ( 무한점프 방지 )
+            isJump = true; //isJump가 true가 되면서 점프를 다시 못하게함 ( 무한점프 방지 ) 
             rigid.AddForce(new Vector3(0,50,0),ForceMode.Impulse);
         }
+
+        if (destination != null) //destination이 null이 아닐때니까 값이 있어야함
+        {
+            transform.position = Vector3.MoveTowards(transform.position, destination.position, 0.1f);
+            Debug.Log("다른 목적지가 있음");
+            if(transform.position == destination.position)
+            {
+                destination = null;
+            }
+        }        
     }
 
     void FixedUpdate()
@@ -49,14 +61,16 @@ public class PlayerBall : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        
-        Debug.Log(cnt);
-
         if (cnt >= 9)
         {
             if (other.name == "Point")
             {
-                rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+                destination = startPoints[0];
+                //Point 객체에 도착하면 destination에 startPoints[0] 좌표가 들어가게 되면서
+                //Update에서 MoveTowards로 움직여짐
+
+                //rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+                return;
             }
         }
 
@@ -64,11 +78,12 @@ public class PlayerBall : MonoBehaviour
         {
             if (other.name == "Point2")
             {
-                rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+                destination = startPoints[1];
+                //rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
             }
         }
 
-        if (cnt >= 48)
+        if(cnt >= 48)
         {
             if (other.name == "Finish")
             {
@@ -79,12 +94,11 @@ public class PlayerBall : MonoBehaviour
 
      void OnTriggerEnter(Collider other) //다른 객체와 충돌했을 때 , ohter이 다른 객체를 의미?
      {
-         if (other.tag == "Item")
-         {
+        if (other.tag == "Item")
+        {
             other.gameObject.SetActive(false);
             cnt++;
             ScoreUI.text = "점수 : " + cnt;
-            Debug.Log(cnt);
-         }
-     }
+        }
+    }
 }
